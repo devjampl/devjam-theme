@@ -58,6 +58,7 @@ Timber::$autoescape = false;
  * You can move this to its own file and include here via php's include("MySite.php")
  */
 class StarterSite extends Timber\Site {
+
     /** Add timber support. */
     public function __construct() {
         add_action( 'after_setup_theme', array( $this, 'theme_supports' ) );
@@ -65,17 +66,35 @@ class StarterSite extends Timber\Site {
         add_filter( 'timber/twig', array( $this, 'add_to_twig' ) );
         add_action( 'init', array( $this, 'register_post_types' ) );
         add_action( 'init', array( $this, 'register_taxonomies' ) );
+        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts') );
+        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles') );
         add_action( 'admin_init', array( $this, 'register_editor_style' ), 1 );
 
         parent::__construct();
     }
+
     /** This is where you can register custom post types. */
     public function register_post_types() {
 
     }
+
     /** This is where you can register custom taxonomies. */
     public function register_taxonomies() {
 
+    }
+
+    /** This is where you can register site scripts */
+    public function enqueue_scripts() {
+        wp_register_script( 'app', get_stylesheet_directory_uri() . '/static/app.min.js', '', '', true);
+
+        wp_enqueue_script( 'app' );
+    }
+
+    /** This is where you can register site styles */
+    public function enqueue_styles() {
+        wp_register_style( 'app', get_stylesheet_directory_uri() . '/static/app.min.css' );
+
+        wp_enqueue_style( 'app' );
     }
 
     /** This is where you add some context
@@ -173,7 +192,6 @@ class StarterSite extends Timber\Site {
     public function register_editor_style() {
         add_editor_style();
     }
-
 }
 
 new StarterSite();
